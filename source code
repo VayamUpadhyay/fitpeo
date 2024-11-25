@@ -1,0 +1,90 @@
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.By;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+
+public class FitPeoAutomation {
+    public static void main(String[] args) {
+        // Set the path to the ChromeDriver executable
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+
+        // Initialize the WebDriver
+        WebDriver driver = new ChromeDriver();
+
+        try {
+            // Open the FitPeo website
+            driver.get("https://www.fitpeo.com/");
+
+            // Print the page title
+            String pageTitle = driver.getTitle();
+            System.out.println("Page Title: " + pageTitle);
+
+            // Click on the "Revenue Calculator" button
+            WebElement revenueCalculatorButton = driver.findElement(By.xpath("//div[text()='Revenue Calculator']"));
+            revenueCalculatorButton.click();
+
+            // Locate the slider
+            WebElement slider = driver.findElement(By.xpath("//input[@type='range']"));
+
+            // Set the slider value to 820
+            String script = "arguments[0].value = 820;";
+            ((org.openqa.selenium.JavascriptExecutor) driver).executeScript(script, slider);
+
+            // Find the text box and enter 520
+            WebElement textBox = driver.findElement(By.xpath("//div/input[@type='number']"));
+            textBox.clear();
+            textBox.sendKeys("520");
+
+            // Check if the slider value matches the text box value
+            String sliderValue = slider.getAttribute("value");
+            String textBoxValue = textBox.getAttribute("value");
+            if (textBoxValue.equals(sliderValue)) {
+                System.out.println("Slider updated correctly to: " + sliderValue);
+            } else {
+                System.out.println("Mismatch! Slider: " + sliderValue + ", Text Box: " + textBoxValue);
+            }
+
+            // Verify the reimbursement header shows the correct value
+            WebElement totalReimbursementHeader = driver.findElement(By.xpath("//header[contains(text(),'Total Recurring Reimbursement for all Patients Per Month:')]"));
+            String headerText = totalReimbursementHeader.getText();
+            System.out.println("Header verification: " + (headerText.contains("$75600") ? "Passed" : "Failed") + ". Header text: " + headerText);
+
+            // Select specific checkboxes
+            WebElement checkbox57 = driver.findElement(By.xpath("//span[contains(text(),'57')]/preceding-sibling::span"));
+            if (!checkbox57.isSelected()) {
+                checkbox57.click();
+            }
+
+            WebElement checkbox19_19 = driver.findElement(By.xpath("//span[contains(text(),'19.19')]/preceding-sibling::span"));
+            if (!checkbox19_19.isSelected()) {
+                checkbox19_19.click();
+            }
+
+            WebElement checkbox63 = driver.findElement(By.xpath("//span[contains(text(),'63')]/preceding-sibling::span"));
+            if (!checkbox63.isSelected()) {
+                checkbox63.click();
+            }
+
+	
+            WebElement checkbox15 = driver.findElement(By.xpath("//span[contains(text(),'15')]/preceding-sibling::span"));
+            if (!checkbox15.isSelected()) {
+                checkbox15.click();
+            }
+
+	// Verify the header displaying Total Recurring Reimbursement for all Patients Per Month
+            WebElement totalReimbursementHeader = driver.findElement(By.xpath("//p/p[text()='75600']"));
+            String headerText = totalReimbursementHeader.getText();
+            if (headerText.contains("$75600")) {
+                System.out.println("Header verification passed: " + headerText);
+            } else {
+                System.out.println("Header verification failed. Expected: $75600, but got: " + headerText);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            driver.quit();
+        }
+    }
+}
